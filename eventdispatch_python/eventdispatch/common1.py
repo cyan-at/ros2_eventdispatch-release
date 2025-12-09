@@ -194,7 +194,7 @@ class TimerWait(CommonEvent):
             self.blackboard[event_dispatch.cv_name].release()
 
             self.blackboard.pop(self.k)
-        elif self.blackboard[self.k]['status'] == BAILED:
+        elif self.blackboard[self.k]['status'] == TIMERWAIT_BAILED:
             self.log("TimerWait bailed! noop")
 
 class BlackboardQueueCVED(EventDispatch):
