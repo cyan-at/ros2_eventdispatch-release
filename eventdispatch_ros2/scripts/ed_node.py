@@ -144,7 +144,7 @@ def main(args=None):
         sys.exit(0)
 
     sys.path.append(os.path.abspath(node.events_module_path))
-    from events import event_dict, initial_events, events_module_update_blackboard, on_shutdown, rosevent_checker
+    from events import event_dict, initial_events, events_module_update_blackboard, on_shutdown, make_validator
     node.get_logger().warn(
         "loaded {} events, {} initial_events".format(
             len(event_dict.keys()),
@@ -158,7 +158,10 @@ def main(args=None):
 
     node.get_logger().warn(
         "updating rosevent_checker from events.py")
-    node.rosevent_validator = rosevent_checker
+    try:
+        node.rosevent_validator = make_validator(blackboard, node)
+    except Exception as e:
+        node.get_logger().warn(f"failed make_validator, noop: {e}")
 
     ##### volatiles
 
