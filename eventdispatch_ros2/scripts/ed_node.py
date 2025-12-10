@@ -66,6 +66,12 @@ class ROS2QueueCVED(CSBQCVED, Node):
             qos,
         )
 
+    def dispatch_helper_validate(self, rosevent):
+        '''
+        for client events.py to define and overwrite
+        '''
+        return True
+
     def dispatch_helper(self, rosevent):
         '''
         rosevent: obj that contains string_array, float_array, int_array
@@ -73,6 +79,10 @@ class ROS2QueueCVED(CSBQCVED, Node):
         for now, this is one event at a time
         TODO(implementer) dispatch more than one at a time
         '''
+        if not self.dispatch_helper_validate(rosevent):
+            self.get_logger().warn("dispatch_helper_validate failed rosevent!")
+            return
+
         payload = rosevent.string_array
         payload.extend(rosevent.int_array)
         payload.extend(rosevent.float_array)
@@ -133,7 +143,7 @@ def main(args=None):
         sys.exit(0)
 
     sys.path.append(os.path.abspath(node.events_module_path))
-    from events import event_dict, initial_events, events_module_update_blackboard, on_shutdown
+    from events import event_dict, initial_events, events_module_update_blackboard, on_shutdown, dispatch_helper_validate
     node.get_logger().warn(
         "loaded {} events, {} initial_events".format(
             len(event_dict.keys()),
@@ -144,6 +154,12 @@ def main(args=None):
     if not events_module_update_blackboard(blackboard, node):
         node.get_logger().warn('failed events_module_update_blackboard, noop')
         sys.exit(0)
+
+    node.get_logger().warn(
+        "updating dispatch_helper_validate from events.py")
+    wrap_instance_method(node,
+        "dispatch_helper_validate",
+        replace_with_func(dispatch_helper_validate))
 
     ##### volatiles
 
