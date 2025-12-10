@@ -1,7 +1,5 @@
 #!/bin/bash
 
-rm -rf ./debian
-
 sudo rosdep init
 rosdep update
 
