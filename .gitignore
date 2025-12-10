@@ -1,1 +1,5 @@
 *.deb
+*/debian/*
+__pycache__
+*.egg-info
+*.obj-x86_64-linux-gnu
