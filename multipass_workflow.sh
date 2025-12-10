@@ -45,4 +45,4 @@ cd $WS_DIR/ros2_eventdispatch-release
 
 echo "####################### debs live"
 echo $(realpath .)
-ls *.deb
+ls -l *.deb
